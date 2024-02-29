@@ -2,28 +2,33 @@
 
 ## Question
 
-Question can be found [here](https://salesforce.stackexchange.com/questions/418722/formula-to-check-if-field-value-is-changed-and-not-null-in-flow/418754#418754)
+Question can be found [here](https://salesforce.stackexchange.com/questions/418856/dataraptor-how-to-do-a-for-each-comparison-formula)
 
 ## Answer
 
-I was able to reproduce the flow with the information you provided and it did what was required.
+Unfortunately such transformation is not possible in a Dataraptor Extract, but luckily there are Dataraptor Transforms!
 
-1. I used the Account object
-2. Triggers on record update
-3. When the `PersonMobile` field is changed and not null, update Important Notes (`FinServ__Notes__c`) field with current DateTime:
+I managed to get the required result by wrapping everything in an Integration Procedure: 
 
-![](https://github.com/sfadriaan/Stack-Exchange-Answers/blob/main/418722/flow-entry-criteria.png)
+![](https://github.com/sfadriaan/Stack-Exchange-Answers/blob/main/418856/input-and-output.png)
 
-I tested both scenarios where the mobile phone is changed to something else as well as when the mobile phone is removed and no other value is provided (thus field is `null` and flow should not trigger).
+I used:
 
-When it comes to using formulas for checking if a field is null/blank, Salesforce gives you [ISBLANK](https://help.salesforce.com/s/articleView?id=sf.customize_functions_isblank.htm&type=5) and [ISNULL](https://help.salesforce.com/s/articleView?id=sf.customize_functions_isnull.htm&type=5), with the preferred one being `ISBLANK` for text fields. 
+1. Dataraptor Transform to extract all the matching list entries
+2. Dataraptor Transform to extract all the non matching list entries
+3. Merged the two lists
+4. Returned the result in the required format
 
-I sometimes have sporadic success with `ISBLANK` and would rather use something more explicit such as `{!$Record.PersonMobilePhone}<>""` which I have found to be more consistent.
+The Salesforce help files [here](https://help.salesforce.com/s/articleView?id=sf.os_function_reference_56716.htm&type=5) lists the function `FILTER` with some examples on how to extract a list entry with certain criteria. I ended up using:
 
-I updated my formula used in the entry criteria of my flow to:
+`FILTER(LIST(FORMULA_List), 'FirstName == "' + FIRST_NAME + '"')`
 
-`ISCHANGED({!$Record.PersonMobilePhone}) && {!$Record.PersonMobilePhone}<>""`
+which returns a list of all the list entries where the `FirstName` matches the string assigned to `FIRST_NAME`. `FORMULA_List` contained the `NameHistory` list.
 
-and I got the same result. 
+I used the same formula to extract all the list entries that does not match, but changed it so that `'FirstName <> "' + FIRST_NAME + '"'`
+
+In the Dataraptor Transform you can also add the additional JSON property `isFirstNameMatchWithChild` with its corresponding value and then return the transformed list to the Integration Procedure. 
+
+While it is not all contained in one Dataraptor as your question asked, I do feel it is better to break all the actions up in different parts which ultimately helps with debugging.
 
 Good luck!
