@@ -1,5 +1,7 @@
 # Salesforce Stack Exchange Answers
 
+<a href="https://salesforce.stackexchange.com/users/110302/adriaan-van-niekerk"><img src="https://salesforce.stackexchange.com/users/flair/110302.png" width="208" height="58" alt="profile for Adriaan Van Niekerk at Salesforce Stack Exchange, Q&amp;A for Salesforce administrators, implementation experts, developers and anybody in-between" title="profile for Adriaan Van Niekerk at Salesforce Stack Exchange, Q&amp;A for Salesforce administrators, implementation experts, developers and anybody in-between"></a>
+
 Repository containing all the [Salesforce Stack Exchange](https://salesforce.stackexchange.com/questions) answers I have provided.
 
 My Salesforce Stack Exchange profile can be found [here](https://salesforce.stackexchange.com/users/110302/adriaan-van-niekerk)
